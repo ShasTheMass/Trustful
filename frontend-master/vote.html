@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>Vote</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+<body>
+  
+  <div class="container">
+
+    <h3 align="center">Time to Vote!</h3>
+    <h4 align="center" id="pollName"></h4>
+    <h5 align="center" id="pollCreator"></h5>
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4" id="voteBody">
+        <button type="submit" class="btn btn-default" id="firstOpt"></button>
+        <button type="submit" class="btn btn-default" id="secondOpt"></button>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    var COLORS = [
+      "rgba(46, 204, 113,1.0)",
+      "rgba(52, 152, 219,1.0)",
+      "rgba(231, 76, 60,1.0)",
+      "rgba(241, 196, 15,1.0)",
+      "rgba(155, 89, 182,1.0)",
+      "rgba(26, 188, 156,1.0)",
+      "rgba(149, 165, 166,1.0)",
+      "rgba(230, 126, 34,1.0)",
+      "rgba(52, 73, 94,1.0)"
+    ];
+  
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    var poll_id = getParameterByName('poll_id');
+
+    function postVote(vote) {
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:8080/votes",
+        data: {
+          "pollId": poll_id,
+          "vote": vote,
+          "pubKey": "token" // localStorage.getItem("token")
+        },
+        success: function() {
+          alert("Vote recorded.");
+        },
+        error: function(msg) {
+          console.log(msg);
+        }
+      });
+    }
+
+    $.get(
+      "http://localhost:8080/polls/" + poll_id,
+      function(data) {
+        $("#pollName").html(data["data"]["name"]);
+        $("#pollCreator").html(data["data"]["creator"]);
+        var type = data["data"]["votes"]["type"];
+        if (type === "binary") {
+          $("#voteBody").html('\
+            <button type="submit" class="btn btn-default" id="firstOpt">' + data["data"]["votes"]["spec"][0] + '</button>\
+            <button type="submit" class="btn btn-default" id="secondOpt">' + data["data"]["votes"]["spec"][1] + '</button>\
+          ');
+          $("#firstOpt").click(function() {
+            postVote(data["data"]["votes"]["spec"][0]);
+          });
+          $("#secondOpt").click(function() {
+            postVote(data["data"]["votes"]["spec"][1]);
+          });
+        } else if (type === "discreet") {
+          // to be implemented
+        }
+      }
+    );
+  </script>
+</body>
+</html>
