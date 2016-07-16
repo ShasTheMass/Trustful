@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" ng-app="page">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Trustful</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+</head>
+<body>
+  <nav style="background-color:#6EF0E9; justify: center" class="navbar navbar-default">
+     <div class="row">
+      <div class="col-md-1" >
+        <image src="img/drawer.png"/>
+      </div>
+      <div id="title" class="col-md-10" style="text-align:center"></div>
+      <div class="col-md-1" style="text-align:right">
+        <image src="img/plus.png" />
+      </div>
+    </div>
+  </nav>
+  <h3>Active Polls:</h3>
+  <div id="pollsTable" /> 
+</div>
+<script type="text/javascript">
+  var title = 'David'
+  $('#title').append(title);
+  $.get(
+    'http://10.100.84.248:8080/polls',
+    function(data) {
+      console.log(data);
+      var polls = data.data;
+      for (var index in polls) {
+        var poll = polls[index];
+        var voteElem;
+        if (poll.voted) {
+          voteElem = '<div class="col-md-2"><image src="img/Ok.png" class="center"/></div>'
+        } else {
+          voteElem = '<div class="col-md-2"><button class="btn btn-default center" type="submit">Vote Now</button></div>'
+        }
+        $('#pollsTable').append('<a class="row" style="display:block" href="http://10.100.84.248:8080/vote.html?poll_id='+poll.id+'"><div>'+
+            '<div class="col-md-1"> <image src="'+poll.img+'"  style="height:50px; width: 50px"/></div>'+
+              '<div class="col-md-1">'+poll.due+'</div>'+
+              '<div class="col-md-8">'+
+                '<div><div class="col-md-1">Poll:</div><div class="col-md-11">'+poll.name+'</div></div>'+
+                '<div><div class="col-md-1">Organiser:</div><div class="col-md-11">'+poll.creator+'</div></div>'+
+              '</div>'+voteElem+'</div></a>')
+      }
+    }
+  )
+</script>
+</body>
+</html>
