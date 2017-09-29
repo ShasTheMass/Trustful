@@ -1,0 +1,35 @@
+/* app css stylesheet */
+html {
+	height:100%;
+}
+
+
+body {
+  height: 100%;
+}
+
+.toolbar {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: center;
+	background-color: #9A58B0;	
+}
+
+.custom_control {
+	background-color:blue;
+	cursor:pointer;
+	color:#fff;
+	padding:5px;
+}
+
+a {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+.center {
+	position: absolute;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0)
+}
